@@ -1,38 +1,58 @@
-const searchFormRef = document.querySelector('#search-form');
-const containerRef = document.querySelector('.container');
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import fetchImg from './fetchImg.js';
 
-const BASE_URL = 'https://pixabay.com';
-const KEY = '29162524-01f0dd46893302e996c3171e6';
+const searchFormRef = document.querySelector('#search-form');
+const gelleryRef = document.querySelector('.gallery');
+
+
 
 searchFormRef.addEventListener('submit', e => {
   e.preventDefault();
   const {
     elements: { searchQuery },
   } = e.currentTarget;
-  console.log(searchQuery.value);
   const category = searchQuery.value;
 
-  const searchParams = new URLSearchParams({
-    key: KEY,
-    q: category,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-  });
+  if (category.trim() === "" ) {
+    return Notify.failure("Please fill the field!");
+  }
 
-  return fetch(`https://pixabay.com/api/?${searchParams}`)
-    .then(r => {
-      return r.json();
-    })
-    .then(data => {
-      console.log(data.hits);
-      const imgArray = data.hits.map(el => {
-        console.log(el);
-        return `<img src="${el.webformatURL}" alt="${category}">`;
-      });
-      containerRef.innerHTML = imgArray.join('');
-    })
-    .catch(error => {
-      console.log('dsfsldkfjdsklfj');
+ 
+
+  fetchImg(category).then(({hits}) => {
+    console.log(hits)
+
+    if(hits.length === 0) {
+      return Notify.failure('Sorry, there are no images matching your search query. Please try again.')
+    }
+    createImgList(hits)}).catch(error => {
+console.log(error)
+      
     });
 });
+
+
+
+function createImgList(cards) {
+console.log(cards.length)
+  const markup = cards.map(card => {
+    return `<div class="photo-card">
+    <img src="${card.webformatURL}" alt="${card.tags}" loading="lazy" />
+    <div class="info">
+      <p class="info-item">
+        <b>Likes ${card.likes}</b>
+      </p>
+      <p class="info-item">
+        <b>Views</b>
+      </p>
+      <p class="info-item">
+        <b>Comments</b>
+      </p>
+      <p class="info-item">
+        <b>Downloads</b>
+      </p>
+    </div>
+  </div>`
+  })
+ gelleryRef.innerHTML = markup.join('');
+}

@@ -87,8 +87,3 @@ function lightbox() {
   });
   return lightbox;
 }
-
-async function refreshlightbox(lightbox) {
-  console.log(lightbox);
-  lightbox.refresh();
-}

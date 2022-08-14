@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="./css/main.css" />
   </head>
   <body>
     <form class="search-form" id="search-form">
@@ -16,8 +17,13 @@
       />
       <button type="submit">Search</button>
     </form>
-    <div class="gallery"></div>
-    <button type="button" class="load-more ishidden">Load more</button>
+    <div class="gallery-wrapper">
+      <div class="gallery"></div>
+      <button type="button" class="load-more" data-id="load-more">
+        Load more
+      </button>
+    </div>
+
     <script src="./js/index.js" type="module"></script>
   </body>
 </html>

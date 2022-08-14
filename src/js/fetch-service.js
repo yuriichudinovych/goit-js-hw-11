@@ -7,6 +7,7 @@ export default class FetchService {
     this.searchQuery = '';
     this.page = 1;
     this.totalHits = 0;
+    this.flag = false;
   }
   fetchData() {
     const options = new URLSearchParams({
@@ -28,6 +29,7 @@ export default class FetchService {
       .then(data => {
         this.incrementPage();
         if (data.hits.length === 0) {
+          this.flag = true;
           return Notify.failure(
             'Sorry, there are no images matching your search query. Please try again.'
           );

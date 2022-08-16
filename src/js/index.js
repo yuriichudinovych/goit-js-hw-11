@@ -2,20 +2,18 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import FetchService from './fetch-service.js';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-
-const searchFormRef = document.querySelector('#search-form');
-const gelleryRef = document.querySelector('.gallery');
-const loadMoreBtnRef = document.querySelector('[data-id="load-more"]');
-
-let lightbox;
+import getREfs from './get-refs.js';
+const refs = getREfs();
 
 const fetchService = new FetchService();
+let lightbox;
 
-searchFormRef.addEventListener('submit', onSearch);
-loadMoreBtnRef.addEventListener('click', onLoadMore);
-changeHiddenLoadMore();
+refs.searchFormRef.addEventListener('submit', onSearch);
+refs.loadMoreBtnRef.addEventListener('click', onLoadMore);
+HideLoadMore();
+
 function onSearch(evt) {
-  loadMoreBtnRef.classList.add('is-hidden');
+  HideLoadMore();
   evt.preventDefault();
   clearGalleryList();
   fetchService.query = evt.currentTarget.elements.searchQuery.value;
@@ -31,7 +29,7 @@ function onSearch(evt) {
       fetchService.totalHitsMessage();
       lightbox = getlightbox();
 
-      changeHiddenLoadMore();
+      showLoadMore();
     })
     .catch(error => {
       console.log(error);
@@ -45,8 +43,8 @@ function onLoadMore() {
       createImgList(hits);
       lightbox.refresh();
       addScroll();
-      if (gelleryRef.children.length >= fetchService.totalHits) {
-        loadMoreBtnRef.classList.add('is-hidden');
+      if (refs.gelleryRef.children.length >= fetchService.totalHits) {
+        HideLoadMore();
         Notify.info(
           "We're sorry, but you've reached the end of search results."
         );
@@ -84,12 +82,13 @@ function createImgList(cards) {
   </div>
   `;
   });
-  gelleryRef.insertAdjacentHTML('beforeend', markup.join(''));
+  refs.gelleryRef.insertAdjacentHTML('beforeend', markup.join(''));
 }
 
 function clearGalleryList() {
-  gelleryRef.innerHTML = '';
+  refs.gelleryRef.innerHTML = '';
 }
+
 function getlightbox() {
   return new SimpleLightbox('.gallery a', {
     captionsData: 'alt',
@@ -98,8 +97,12 @@ function getlightbox() {
   });
 }
 
-function changeHiddenLoadMore() {
-  return loadMoreBtnRef.classList.toggle('is-hidden');
+function showLoadMore() {
+  return refs.loadMoreBtnRef.classList.remove('is-hidden');
+}
+
+function HideLoadMore() {
+  return refs.loadMoreBtnRef.classList.add('is-hidden');
 }
 
 function addScroll() {

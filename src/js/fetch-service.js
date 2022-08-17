@@ -11,34 +11,7 @@ export default class FetchService {
     this.totalHits = 0;
     this.flag = false;
   }
-  // fetchData() {
-  //   const options = new URLSearchParams({
-  //     key: '29162524-01f0dd46893302e996c3171e6',
-  //     q: this.searchQuery,
-  //     image_type: 'photo',
-  //     orientation: 'horizontal',
-  //     safesearch: true,
-  //     per_page: 40,
-  //     page: this.page,
-  //   });
-  //   return fetch(`${BASE_URL}?${options}`)
-  //     .then(r => {
-  //       if (!r.ok) {
-  //         throw new Error(r.status);
-  //       }
-  //       return r.json();
-  //     })
-  //     .then(data => {
-  //       if (data.hits.length === 0) {
-  //         return Notify.failure(
-  //           'Sorry, there are no images matching your search query. Please try again.'
-  //         );
-  //       }
-  //       this.incrementPage();
-  //       this.totalHits = data.totalHits;
-  //       return data.hits;
-  //     });
-  // }
+
   async fetchData() {
     const options = new URLSearchParams({
       key: API_KEY,
@@ -50,14 +23,9 @@ export default class FetchService {
       page: this.page,
     });
     const url = `${BASE_URL}api/?${options}`;
-
     const response = await fetch(url);
     const data = await response.json('');
-    if (data.hits.length === 0) {
-      return Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
+
     this.incrementPage();
     this.totalHits = data.totalHits;
     return data.hits;

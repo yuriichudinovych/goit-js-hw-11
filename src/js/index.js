@@ -3,9 +3,11 @@ import FetchService from './fetch-service.js';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import getREfs from './get-refs.js';
-const refs = getREfs();
+import photoCardTpl from '../templates/photo-card.hbs';
 
 const fetchService = new FetchService();
+const refs = getREfs();
+
 let lightbox;
 
 refs.searchFormRef.addEventListener('submit', onSearch);
@@ -55,34 +57,8 @@ function onLoadMore() {
     });
 }
 
-function createImgList(cards) {
-  const markup = cards.map(card => {
-    return `<div class="photo-card">
-    <a class="photo-card-link" href='${card.largeImageURL}' >
-    <img class="card-img" src="${card.webformatURL}" alt="${card.tags}" loading="lazy" />
-    </a>
-    <div class="info">
-      <p class="info-item">
-        <b>Likes</b><br>
-        ${card.likes}
-      </p>
-      <p class="info-item">
-        <b>Views </b><br>
-        ${card.views}
-      </p>
-      <p class="info-item">
-        <b>Comments </b><br>
-        ${card.comments}
-      </p>
-      <p class="info-item">
-        <b>Downloads </b><br>
-        ${card.downloads}
-      </p>
-    </div>
-  </div>
-  `;
-  });
-  refs.gelleryRef.insertAdjacentHTML('beforeend', markup.join(''));
+function createImgList(hits) {
+  refs.gelleryRef.insertAdjacentHTML('beforeend', photoCardTpl(hits));
 }
 
 function clearGalleryList() {

@@ -23,12 +23,10 @@ export default class FetchService {
       page: this.page,
     });
     const url = `${BASE_URL}api/?${options}`;
-    const response = await fetch(url);
-    const data = await response.json('');
-
+    const response = await axios.get(url);
     this.incrementPage();
-    this.totalHits = data.totalHits;
-    return data.hits;
+    this.totalHits = response.data.totalHits;
+    return response.data.hits;
   }
 
   incrementPage() {

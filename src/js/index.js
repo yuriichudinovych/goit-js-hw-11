@@ -2,20 +2,26 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import FetchService from './fetch-service.js';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import getREfs from './get-refs.js';
+import getRefs from './get-refs.js';
 import photoCardTpl from '../templates/photo-card.hbs';
 
 const fetchService = new FetchService();
-const refs = getREfs();
+// const refs = getRefs();
 
+const refs = ({ searchFormRef, gelleryRef, loadMoreBtnRef, galleryWrapperRef } =
+  getRefs());
+
+console.log(searchFormRef);
 let lightbox;
 
-refs.searchFormRef.addEventListener('submit', onSearch);
-refs.loadMoreBtnRef.addEventListener('click', onLoadMore);
-HideLoadMore();
+searchFormRef.addEventListener('submit', onSearch);
+loadMoreBtnRef.addEventListener('click', onLoadMore);
+HideMarkup(loadMoreBtnRef, 'is-hidden');
+HideMarkup(galleryWrapperRef, 'gallery-wrapper__is-hidden');
 
 async function onSearch(evt) {
-  HideLoadMore();
+  HideMarkup(loadMoreBtnRef, 'is-hidden');
+  HideMarkup(galleryWrapperRef, 'gallery-wrapper__is-hidden');
   evt.preventDefault();
   clearGalleryList();
   fetchService.query = evt.currentTarget.elements.searchQuery.value;
@@ -31,10 +37,11 @@ async function onSearch(evt) {
         'Sorry, there are no images matching your search query. Please try again.'
       );
     }
+    showMarkup(loadMoreBtnRef, 'is-hidden');
+    showMarkup(galleryWrapperRef, 'gallery-wrapper__is-hidden');
     createImgList(hits);
     fetchService.totalHitsMessage();
     lightbox = getlightbox();
-    showLoadMore();
   } catch (error) {
     console.log(error);
   }
@@ -46,8 +53,8 @@ async function onLoadMore() {
     createImgList(hits);
     lightbox.refresh();
     addScroll();
-    if (refs.gelleryRef.children.length >= fetchService.totalHits) {
-      HideLoadMore();
+    if (gelleryRef.children.length >= fetchService.totalHits) {
+      HideMarkup(loadMoreBtnRef, 'is-hidden');
       Notify.info("We're sorry, but you've reached the end of search results.");
     }
   } catch (error) {
@@ -56,11 +63,11 @@ async function onLoadMore() {
 }
 
 function createImgList(hits) {
-  refs.gelleryRef.insertAdjacentHTML('beforeend', photoCardTpl(hits));
+  gelleryRef.insertAdjacentHTML('beforeend', photoCardTpl(hits));
 }
 
 function clearGalleryList() {
-  refs.gelleryRef.innerHTML = '';
+  gelleryRef.innerHTML = '';
 }
 
 function getlightbox() {
@@ -71,12 +78,12 @@ function getlightbox() {
   });
 }
 
-function showLoadMore() {
-  return refs.loadMoreBtnRef.classList.remove('is-hidden');
+function showMarkup(element, sellector) {
+  return element.classList.remove(sellector);
 }
 
-function HideLoadMore() {
-  return refs.loadMoreBtnRef.classList.add('is-hidden');
+function HideMarkup(element, sellector) {
+  return element.classList.add(sellector);
 }
 
 function addScroll() {

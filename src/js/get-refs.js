@@ -1,4 +1,4 @@
-export default function getREfs() {
+export default function getRefs() {
   return {
     searchFormRef: document.querySelector('#search-form'),
     gelleryRef: document.querySelector('.gallery'),
